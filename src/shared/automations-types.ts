@@ -1,3 +1,4 @@
+import type { AutomationLaunchPin } from './automation-launch-pin'
 import type { TuiAgent } from './tui-agent'
 import type { SetupDecision } from './worktree/create-types'
 import type { TaskSourceContext, WorkspaceRunContext } from './task-source-context'
@@ -163,9 +164,8 @@ export type AutomationRun = {
   /** Why separate from `usage.model`: that one is harvested from the provider
    *  log after the fact and is absent whenever no session could be matched.
    *  This records what the automation requested, so a run stays reproducible
-   *  even when it never reached the provider. Absent on legacy runs.
-   *  Shaped as AutomationLaunchPin, which builds it. */
-  launchRequest?: { model: string; effort?: string } | null
+   *  even when it never reached the provider. Absent on legacy runs. */
+  launchRequest?: AutomationLaunchPin | null
   error: string | null
   startedAt: number | null
   dispatchedAt: number | null
@@ -264,9 +264,7 @@ export type ExternalAutomationAction = 'pause' | 'resume' | 'run' | 'delete'
 export type ExternalAutomationRunStatus = 'completed' | 'failed' | 'unknown'
 
 export type ExternalAutomationTarget =
-  | {
-      type: 'local'
-    }
+  | { type: 'local' }
   | {
       type: 'ssh'
       connectionId: string

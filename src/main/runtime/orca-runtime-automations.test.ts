@@ -177,6 +177,29 @@ describe('OrcaRuntimeService automation methods', () => {
     )
   })
 
+  it('refuses an effort on an automation that is already unpinned, exactly as create does', async () => {
+    const store = makeStore([{ ...existingAutomation, model: null, effort: null }])
+    const runtime = new OrcaRuntimeService(store as never)
+
+    await expect(runtime.updateAutomation('auto-1', { effort: 'high' })).rejects.toThrow(
+      '--effort requires --model.'
+    )
+    expect(store.updateAutomation).not.toHaveBeenCalled()
+  })
+
+  it('keeps an effort edit against the model the automation already has pinned', async () => {
+    const store = makeStore([{ ...existingAutomation, model: 'opus', effort: 'low' }])
+    const runtime = new OrcaRuntimeService(store as never)
+
+    await runtime.updateAutomation('auto-1', { effort: 'high' })
+
+    expect(store.updateAutomation).toHaveBeenCalledWith(
+      'auto-1',
+      { model: 'opus', effort: 'high' },
+      undefined
+    )
+  })
+
   it('revalidates a pinned model against a newly chosen provider', async () => {
     const store = makeStore([{ ...existingAutomation, model: 'opus', effort: 'high' }])
     const runtime = new OrcaRuntimeService(store as never)

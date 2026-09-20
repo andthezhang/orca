@@ -45,8 +45,10 @@ export function applyAutomationLaunchPinPatch(
   const pin = resolveAutomationLaunchPin(
     patch.agentId ?? current.agentId,
     model,
-    // Unpinning the model unpins the effort with it; nothing is left to apply it to.
-    model === null ? null : patch.effort === undefined ? current.effort : patch.effort
+    // Why the patch's own model and not the merged one: only an explicit `--model null`
+    // unpins, and it takes the effort with it. A record that is merely already unpinned
+    // must still reject an effort, exactly as create does.
+    patch.model === null ? null : patch.effort === undefined ? current.effort : patch.effort
   )
   patch.model = pin.model
   patch.effort = pin.effort
