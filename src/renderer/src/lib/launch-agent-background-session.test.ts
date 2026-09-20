@@ -190,9 +190,9 @@ describe('launchAgentBackgroundSession', () => {
         ORCA_AUTOMATION_ID: 'automation-1',
         ORCA_AUTOMATION_RUN_ID: 'run-7'
       }),
-      launchConfig: {
-        agentEnv: { ORCA_AUTOMATION_ID: 'automation-1', ORCA_AUTOMATION_RUN_ID: 'run-7' }
-      }
+      // ...but not onto the durable resume record, which a later user-initiated
+      // resume re-spawns from and which must not claim to be an automation run.
+      launchConfig: { agentEnv: {} }
     })
   })
 
